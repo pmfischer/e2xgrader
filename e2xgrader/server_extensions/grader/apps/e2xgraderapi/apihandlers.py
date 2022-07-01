@@ -6,8 +6,15 @@ from nbgrader.server_extensions.formgrader.apihandlers import (
     AssignmentCollectionHandler,
     AssignmentHandler,
 )
-from .base import E2xApiHandler
-from e2xgrader.models import PresetModel
+from e2xgrader.models import (
+    PresetModel,
+    AssignmentModel,
+    ExerciseModel,
+    TaskPoolModel,
+    TaskModel,
+    TemplateModel,
+)
+from .base import E2xApiHandler, BaseApiListHandler, BaseApiManageHandler
 
 
 class E2xAssignmentCollectionHandler(E2xApiHandler, AssignmentCollectionHandler):
@@ -46,11 +53,7 @@ class GenerateFeedbackHandler(E2xApiHandler):
     @web.authenticated
     @check_xsrf
     def post(self, assignment_id, student_id):
-        data = self.get_json_body()
-        hide_cells = False
-        if data is not None:
-            hide_cells = self.get_json_body().get("hide_cells", hide_cells)
-        self.log.info(hide_cells)
+        hide_cells = json.loads(self.get_argument("hide_cells", "false"))
         self.write(
             json.dumps(
                 self.api.generate_feedback(
@@ -64,11 +67,7 @@ class GenerateAllFeedbackHandler(E2xApiHandler):
     @web.authenticated
     @check_xsrf
     def post(self, assignment_id):
-        data = self.get_json_body()
-        hide_cells = False
-        if data is not None:
-            hide_cells = self.get_json_body().get("hide_cells", hide_cells)
-        self.log.info(hide_cells)
+        hide_cells = json.loads(self.get_argument("hide_cells", "false"))
         self.write(
             json.dumps(self.api.generate_feedback(assignment_id, hide_cells=hide_cells))
         )
@@ -101,6 +100,35 @@ class PresetHandler(E2xApiHandler):
         handler()
 
 
+class TemplateVariableHandler(E2xApiHandler):
+    @web.authenticated
+    @check_xsrf
+    def get(self):
+        template = self.get_argument("template")
+        variables = NotebookVariableExtractor().extract(
+            os.path.join(
+                self.url_prefix, "templates", template, "{}.ipynb".format(template)
+            )
+        )
+        self.write(json.dumps(variables))
+
+
+class KernelSpecHandler(E2xApiHandler):
+    @web.authenticated
+    @check_xsrf
+    def get(self):
+        self.write(json.dumps(KernelSpecManager().get_all_specs()))
+
+
+class GenerateExerciseHandler(E2xApiHandler):
+    @web.authenticated
+    @check_xsrf
+    def get(self):
+        resources = json.loads(self.get_argument("resources"))
+        GenerateExercise(coursedir=self.coursedir).convert(resources)
+        self.write({"status": True})
+
+
 class GraderHandler(E2xApiHandler):
     @web.authenticated
     @check_xsrf
@@ -127,5 +155,49 @@ default_handlers = [
         GenerateFeedbackHandler,
     ),
     (r"/taskcreator/api/presets", PresetHandler),
+    (
+        r"/taskcreator/api/assignments/?",
+        BaseApiListHandler,
+        dict(model_cls=AssignmentModel),
+    ),
+    (
+        r"/taskcreator/api/template/(?P<name>[^/]+)/?",
+        BaseApiManageHandler,
+        dict(model_cls=TemplateModel),
+    ),
+    (
+        r"/taskcreator/api/templates/?",
+        BaseApiListHandler,
+        dict(model_cls=TemplateModel),
+    ),
+    (
+        r"/taskcreator/api/pool/(?P<name>[^/]+)/?",
+        BaseApiManageHandler,
+        dict(model_cls=TaskPoolModel),
+    ),
+    (r"/taskcreator/api/pools/?", BaseApiListHandler, dict(model_cls=TaskPoolModel)),
+    (
+        r"/taskcreator/api/pools/(?P<pool>[^/]+)/?",
+        BaseApiListHandler,
+        dict(model_cls=TaskModel),
+    ),
+    (
+        r"/taskcreator/api/task/(?P<pool>[^/]+)/(?P<name>[^/]+)/?",
+        BaseApiManageHandler,
+        dict(model_cls=TaskModel),
+    ),
+    (
+        r"/taskcreator/api/exercise/(?P<assignment>[^/]+)/(?P<name>[^/]+)/?",
+        BaseApiManageHandler,
+        dict(model_cls=ExerciseModel),
+    ),
+    (
+        r"/taskcreator/api/assignments/(?P<assignment>[^/]+)/?",
+        BaseApiListHandler,
+        dict(model_cls=ExerciseModel),
+    ),
+    (r"/taskcreator/api/templates/variables", TemplateVariableHandler),
+    (r"/taskcreator/api/kernelspec", KernelSpecHandler),
+    (r"/taskcreator/api/generate_exercise", GenerateExerciseHandler),
     (r"/e2xgrader/api/graders", GraderHandler),
 ]

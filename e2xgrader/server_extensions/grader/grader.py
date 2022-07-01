@@ -6,12 +6,14 @@ from jinja2 import Environment, FileSystemLoader
 from jupyter_core.paths import jupyter_config_path
 from nbgrader.apps import NbGrader
 
+from .apps.nbgraderapi import NbGraderApi
+
 
 class E2xGrader(Application):
 
     apps = List(
         trait=Any(),
-        default_value=[],
+        default_value=[NbGraderApi],
     ).tag(config=True)
 
     def __init__(self, **kwargs):

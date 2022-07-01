@@ -1,0 +1,1 @@
+from .manage_assignments import ManageAssignments

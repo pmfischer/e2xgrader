@@ -8,13 +8,14 @@ from nbgrader.apps import NbGrader
 
 from .apps.nbgraderapi import NbGraderApi
 from .apps.e2xgraderapi import E2xGraderApi
+from .apps.manage_assignments import ManageAssignments
 
 
 class E2xGrader(Application):
 
     apps = List(
         trait=Any(),
-        default_value=[E2xGraderApi, NbGraderApi],
+        default_value=[E2xGraderApi, NbGraderApi, ManageAssignments],
     ).tag(config=True)
 
     def __init__(self, **kwargs):

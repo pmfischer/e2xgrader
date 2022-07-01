@@ -69,6 +69,12 @@ class ExtensionManager:
             sys_prefix=sys_prefix,
             user=user,
         )
+        disable_nbextension(
+            require="formgrader/main",
+            section="tree",
+            sys_prefix=sys_prefix,
+            user=user,
+        )
 
         # Install e2xgrader nbextensions
         self.install_nbextensions("e2xgrader", sys_prefix=sys_prefix, user=user)
@@ -88,6 +94,9 @@ class ExtensionManager:
             require="taskcreator/main", section="tree", sys_prefix=sys_prefix, user=user
         )
         enable_nbextension(
+            require="grader/main", section="tree", sys_prefix=sys_prefix, user=user
+        )
+        enable_nbextension(
             require="templatebar/main",
             section="notebook",
             sys_prefix=sys_prefix,
@@ -104,10 +113,10 @@ class ExtensionManager:
         print(f"Activate student mode with sys_prefix = {sys_prefix} and user = {user}")
         # Enable server extensions
         self.enable_serverextension_py("nbgrader", sys_prefix=sys_prefix, user=user)
-        self.disable_serverextension("nbgrader.server_extensions.formgrader")
+        self.disable_serverextension("nbgrader.server_extensions.grader")
         self.disable_serverextension("nbgrader.server_extensions.assignment_list")
         self.enable_serverextension_py("e2xgrader", sys_prefix=sys_prefix, user=user)
-        self.disable_serverextension("e2xgrader.server_extensions.formgrader")
+        self.disable_serverextension("e2xgrader.server_extensions.grader")
 
         # Install nbgrader nbextensions
         self.install_nbextensions("nbgrader", sys_prefix=sys_prefix, user=user)

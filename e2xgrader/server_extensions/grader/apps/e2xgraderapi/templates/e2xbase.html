@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <script type="text/javascript">
+    window.base_url = "{{ base_url }}";
+    window.url_prefix = "{{ url_prefix }}";
+
+    function pathJoin(parts, sep) {
+        const separator = sep || '/';
+        parts = parts.map((part, index) => {
+            if (index) {
+                part = part.replace(new RegExp('^' + separator), '');
+            }
+            if (index !== parts.length - 1) {
+                part = part.replace(new RegExp(separator + '$'), '');
+            }
+            return part;
+        });
+        return parts.join(separator);
+    }
+    const apiScript = document.createElement("script");
+    apiScript.type = "text/javascript";
+    apiScript.src = pathJoin([window.base_url, "e2x", "static", "js", "api.min.js"]);
+    document.head.append(apiScript);    
+  </script>
+  {%- block head -%}
+  {%- endblock -%}
+</head>
+<body>
+  {%- block body -%}
+  {%- endblock -%}
+</body>
+</html>

@@ -7,13 +7,14 @@ from jupyter_core.paths import jupyter_config_path
 from nbgrader.apps import NbGrader
 
 from .apps.nbgraderapi import NbGraderApi
+from .apps.e2xgraderapi import E2xGraderApi
 
 
 class E2xGrader(Application):
 
     apps = List(
         trait=Any(),
-        default_value=[NbGraderApi],
+        default_value=[E2xGraderApi, NbGraderApi],
     ).tag(config=True)
 
     def __init__(self, **kwargs):

@@ -72,6 +72,7 @@ def _jupyter_server_extension_paths():
         dict(module="e2xgrader.server_extensions.formgrader"),
         dict(module="e2xgrader.server_extensions.assignment_list"),
         dict(module="e2xgrader.server_extensions.e2xbase"),
+        dict(module="e2xgrader.server_extensions.validate_assignment"),
     ]
 
     return paths

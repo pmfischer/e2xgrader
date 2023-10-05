@@ -195,7 +195,7 @@ let insertRow = function (table) {
 let loadSubmittedNotebooks = function () {
   let tbl = $("#main-table");
 
-  const models = new SubmittedNotebooks();
+  models = new SubmittedNotebooks();
 
   models.loaded = false;
   models.fetch({
@@ -224,6 +224,8 @@ let loadSubmittedNotebooks = function () {
     },
   });
 };
+
+let models = undefined;
 
 $(window).on("load", function () {
   loadSubmittedNotebooks();

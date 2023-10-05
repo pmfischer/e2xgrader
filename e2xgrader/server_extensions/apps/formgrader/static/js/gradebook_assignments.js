@@ -76,7 +76,7 @@ let insertRow = function (table) {
 let loadAssignments = function () {
   let tbl = $("#main-table");
 
-  const models = new Assignments();
+  models = new Assignments();
   models.loaded = false;
   models.fetch({
     success: function () {
@@ -93,6 +93,8 @@ let loadAssignments = function () {
     },
   });
 };
+
+let models = undefined;
 
 $(window).on("load", function () {
   loadAssignments();

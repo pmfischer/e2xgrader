@@ -93,7 +93,7 @@ let insertRow = function (table) {
 let loadNotebooks = function () {
   let tbl = $("#main-table");
 
-  const models = new Notebooks();
+  models = new Notebooks();
   models.loaded = false;
   models.fetch({
     success: function () {
@@ -110,6 +110,8 @@ let loadNotebooks = function () {
     },
   });
 };
+
+let models = undefined;
 
 $(window).on("load", function () {
   loadNotebooks();
